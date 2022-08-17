@@ -4,6 +4,8 @@
 ##
 # TODO: make images out of text repsonses
 # TODO: filter out old responses from the same student
+# TODO: make a readme with instructions for getting auth credentials
+# TODO: accept images that are pdf or jpg (not just png)
 ##
 
 from cgitb import text
