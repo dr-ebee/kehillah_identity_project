@@ -3,7 +3,6 @@
 
 ##
 # TODO: make images out of text repsonses
-# TODO: filter out old responses from the same student
 # TODO: make a readme with instructions for getting auth credentials
 # TODO: accept images that are pdf or jpg (not just png)
 ##
@@ -140,7 +139,11 @@ def authenticate():
 
     return creds
 
+def filter_old_responses_out_per_person(df):
+    return df.iloc[-1,:]
+
 def filter_old_responses_out(df):
+    df = df.groupby("Email Address").apply(filter_old_responses_out_per_person)
     return df
 
 def read_image(image_id, service):
@@ -180,14 +183,18 @@ def play_slides(slides):
     myprog = gui(root, slides)
     root.mainloop()
 
+def test_slides():
+    example_image = Image.open("1sUBFSEriRCl0tMAvZO1e_BzgOzjT_5b4.png")
+    slides = make_slides(["example response"], [example_image])
+    play_slides(slides)
+
 def main():
     creds = authenticate()
     service = build('drive', 'v3', credentials=creds)
     responses_sheets_file = "1FD721rrfKDhcwEKt5nO_JoCbf01S1WhZnRItrzEDLgY"
     df = read_csv(creds=creds, file_id=responses_sheets_file, output_filename="tmp")
+    df.to_csv("kehilla_identity_project.csv")
     slides = make_presentation(df, service)
-    # example_image = Image.open("1sUBFSEriRCl0tMAvZO1e_BzgOzjT_5b4.png")
-    # slides = make_slides(["example response"], [example_image])
     play_slides(slides)
 
 if __name__ == '__main__':
